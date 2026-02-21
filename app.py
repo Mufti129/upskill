@@ -3,7 +3,30 @@ import pandas as pd
 import plotly.express as px
 
 st.set_page_config(layout="wide", page_title="Executive Training Dashboard")
-
+st.markdown("""
+<style>
+.big-font {
+    font-size:18px !important;
+    font-weight:600;
+}
+.section-title {
+    font-size:24px;
+    font-weight:700;
+    margin-top:30px;
+    margin-bottom:10px;
+}
+.card {
+    padding:15px;
+    border-radius:12px;
+    background-color:#f9fafc;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+hr {
+    margin-top:25px;
+    margin-bottom:25px;
+}
+</style>
+""", unsafe_allow_html=True)
 # ======================================================
 # LOAD GOOGLE SHEETS
 # ======================================================
@@ -95,8 +118,9 @@ filtered_df = df[
 # EXECUTIVE KPI
 # ======================================================
 
-st.title("Executive Training Dashboard")
-
+#st.title("Executive Training Dashboard")
+st.markdown('<div class="section-title">Executive Training Performance Dashboard</div>', unsafe_allow_html=True)
+st.markdown("Ringkasan performa revenue, konsentrasi bisnis, dan peluang ekspansi klien.")
 col1, col2, col3, col4 = st.columns(4)
 
 total_revenue = filtered_df['total_revenue'].sum()
@@ -110,8 +134,8 @@ col3.metric("Total Participants", int(total_participants))
 col4.metric("Avg Order Value", f"Rp {avg_order_value:,.0f}")
 
 st.markdown("---")
-st.markdown("## 📈 Strategic Insight")
-
+#st.markdown("## 📈 Strategic Insight")
+st.markdown('<div class="section-title">📈 Strategic Insights</div>', unsafe_allow_html=True)
 # =============================
 # MOM GROWTH
 # =============================
@@ -144,7 +168,6 @@ else:
     st.error(f"Revenue turun {abs(latest_growth):.2f}% dibanding bulan sebelumnya. Perlu investigasi penyebab penurunan.")
 
 st.markdown("### Revenue Concentration (Pareto 80/20)")
-
 training_rev = (
     filtered_df.groupby('training_name')['total_revenue']
     .sum()
@@ -337,8 +360,11 @@ client_analysis = (
     .sort_values(by='total_revenue', ascending=False)
 )
 
-st.dataframe(client_analysis.head(10))
-
+#st.dataframe(client_analysis.head(10))
+st.dataframe(
+    client_analysis.head(10),
+    use_container_width=True
+)
 # Upsell Logic
 st.subheader("Upsell Candidates")
 
@@ -350,3 +376,9 @@ upsell = client_analysis[
 ]
 
 st.dataframe(upsell)
+
+st.markdown("---")
+st.markdown(
+    "<center><small>Executive Dashboard by Mukhammad Rekza Mufti • Auto Updated from Google Sheets • Powered by Streamlit</small></center>",
+    unsafe_allow_html=True
+)
