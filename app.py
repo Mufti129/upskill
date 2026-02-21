@@ -95,7 +95,7 @@ filtered_df = df[
 # EXECUTIVE KPI
 # ======================================================
 
-st.title("📊 Executive Training Dashboard")
+st.title("Executive Training Dashboard")
 
 col1, col2, col3, col4 = st.columns(4)
 
@@ -110,6 +110,106 @@ col3.metric("Total Participants", int(total_participants))
 col4.metric("Avg Order Value", f"Rp {avg_order_value:,.0f}")
 
 st.markdown("---")
+st.markdown("## 📈 Strategic Insight")
+
+# =============================
+# MOM GROWTH
+# =============================
+
+monthly = (
+    filtered_df.groupby('month')['total_revenue']
+    .sum()
+    .sort_index()
+)
+
+monthly_growth = monthly.pct_change() * 100
+
+latest_growth = monthly_growth.iloc[-1] if len(monthly_growth) > 1 else 0
+
+colA, colB, colC = st.columns(3)
+
+colA.metric(
+    "Latest MoM Growth",
+    f"{latest_growth:.2f}%",
+)
+
+colB.metric(
+    "Best Month Revenue",
+    f"Rp {monthly.max():,.0f}"
+)
+
+colC.metric(
+    "Worst Month Revenue",
+    f"Rp {monthly.min():,.0f}"
+)
+
+st.markdown("### Revenue Concentration (Pareto 80/20)")
+
+training_rev = (
+    filtered_df.groupby('training_name')['total_revenue']
+    .sum()
+    .sort_values(ascending=False)
+)
+
+pareto_df = training_rev.reset_index()
+pareto_df['cumulative_%'] = (
+    pareto_df['total_revenue'].cumsum() /
+    pareto_df['total_revenue'].sum()
+) * 100
+
+top_80 = pareto_df[pareto_df['cumulative_%'] <= 80]
+
+st.write(f"⚠ {len(top_80)} training menyumbang 80% revenue")
+
+st.dataframe(top_80)
+
+st.markdown("### Client Revenue Dependency")
+
+client_rev = (
+    filtered_df.groupby('company_name')['total_revenue']
+    .sum()
+    .sort_values(ascending=False)
+)
+
+top_client_share = (client_rev.iloc[0] / client_rev.sum()) * 100
+
+st.metric("Top Client Contribution %", f"{top_client_share:.2f}%")
+
+st.markdown("### Pricing Power Insight")
+
+avg_price = filtered_df.groupby('training_name')['price_per_pax'].mean()
+
+highest_price_training = avg_price.idxmax()
+lowest_price_training = avg_price.idxmin()
+
+colX, colY = st.columns(2)
+
+colX.metric("Highest Avg Price Training", highest_price_training)
+colY.metric("Lowest Avg Price Training", lowest_price_training)
+
+st.markdown("### Advanced Upsell Scoring")
+
+client_analysis = (
+    filtered_df.groupby('company_name')
+    .agg(
+        total_revenue=('total_revenue','sum'),
+        total_orders=('order_id','nunique'),
+        total_participants=('qty','sum')
+    )
+    .reset_index()
+)
+
+client_analysis['upsell_score'] = (
+    client_analysis['total_revenue'].rank(pct=True) * 0.5 +
+    client_analysis['total_participants'].rank(pct=True) * 0.5
+)
+
+upsell_candidates = client_analysis.sort_values(
+    by='upsell_score',
+    ascending=False
+).head(5)
+
+st.dataframe(upsell_candidates)
 
 # ======================================================
 # 1️⃣ TRAINING REVENUE RANKING
