@@ -121,27 +121,27 @@ monthly = (
     .sum()
     .sort_index()
 )
-
 monthly_growth = monthly.pct_change() * 100
-
 latest_growth = monthly_growth.iloc[-1] if len(monthly_growth) > 1 else 0
-
 colA, colB, colC = st.columns(3)
-
 colA.metric(
     "Latest MoM Growth",
     f"{latest_growth:.2f}%",
 )
-
 colB.metric(
     "Best Month Revenue",
     f"Rp {monthly.max():,.0f}"
 )
-
 colC.metric(
     "Worst Month Revenue",
     f"Rp {monthly.min():,.0f}"
 )
+if latest_growth > 10:
+    st.success(f"Revenue menunjukkan akselerasi kuat dengan pertumbuhan {latest_growth:.2f}% dibanding bulan sebelumnya. Momentum bisnis sedang ekspansif.")
+elif latest_growth > 0:
+    st.info(f"Revenue tumbuh {latest_growth:.2f}% dari bulan sebelumnya. Pertumbuhan ada, namun belum agresif.")
+else:
+    st.error(f"Revenue turun {abs(latest_growth):.2f}% dibanding bulan sebelumnya. Perlu investigasi penyebab penurunan.")
 
 st.markdown("### Revenue Concentration (Pareto 80/20)")
 
@@ -160,8 +160,18 @@ pareto_df['cumulative_%'] = (
 top_80 = pareto_df[pareto_df['cumulative_%'] <= 80]
 
 st.write(f"⚠ {len(top_80)} training menyumbang 80% revenue")
-
 st.dataframe(top_80)
+total_training = len(training_rev)
+dominant_count = len(top_80)
+
+concentration_ratio = dominant_count / total_training * 100
+
+if concentration_ratio < 30:
+    st.warning("Revenue sangat terkonsentrasi pada sedikit training. Risiko bisnis tinggi jika demand training utama turun.")
+elif concentration_ratio < 50:
+    st.info("Revenue cukup terdistribusi, namun masih ada ketergantungan pada beberapa training utama.")
+else:
+    st.success("Revenue relatif terdiversifikasi antar training. Risiko konsentrasi rendah.")
 
 st.markdown("### Client Revenue Dependency")
 
@@ -174,9 +184,14 @@ client_rev = (
 top_client_share = (client_rev.iloc[0] / client_rev.sum()) * 100
 
 st.metric("Top Client Contribution %", f"{top_client_share:.2f}%")
+if top_client_share > 40:
+    st.error("Bisnis sangat tergantung pada satu klien utama. Risiko kehilangan revenue besar jika klien tersebut churn.")
+elif top_client_share > 25:
+    st.warning("Terdapat ketergantungan cukup signifikan pada klien utama.")
+else:
+    st.success("Revenue relatif terdiversifikasi antar klien.")
 
 st.markdown("### Pricing Power Insight")
-
 avg_price = filtered_df.groupby('training_name')['price_per_pax'].mean()
 
 highest_price_training = avg_price.idxmax()
@@ -186,7 +201,11 @@ colX, colY = st.columns(2)
 
 colX.metric("Highest Avg Price Training", highest_price_training)
 colY.metric("Lowest Avg Price Training", lowest_price_training)
-
+price_gap = avg_price.max() - avg_price.min()
+if price_gap > 5_000_000:
+    st.info("Terdapat gap harga signifikan antar training. Ada peluang repositioning atau bundling.")
+else:
+    st.write("Struktur harga relatif homogen antar training.")
 st.markdown("### Advanced Upsell Scoring")
 
 client_analysis = (
@@ -210,7 +229,10 @@ upsell_candidates = client_analysis.sort_values(
 ).head(5)
 
 st.dataframe(upsell_candidates)
-
+st.markdown(
+    "Klien dengan skor upsell tertinggi memiliki kombinasi revenue dan partisipasi besar. "
+    "Strategi cross-sell atau kontrak jangka panjang dapat meningkatkan lifetime value."
+)
 # ======================================================
 # 1️⃣ TRAINING REVENUE RANKING
 # ======================================================
