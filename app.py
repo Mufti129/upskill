@@ -92,7 +92,7 @@ def load_data():
     orders = orders.dropna(subset=["order_date"])
     orders = orders.drop_duplicates(subset="order_id")
     catalog = catalog.drop_duplicates(subset="training_id")
-    customers = customers.drop_duplicates(subset="company_name")
+    customers = customers.drop_duplicates(subset="customer_id")
     # ========= STANDARDIZE TEXT =========
     orders["training_name"] = (orders["training_name"].str.strip().str.lower().str.title())
     catalog["training_name"] = (catalog["training_name"].str.strip().str.lower().str.title())
