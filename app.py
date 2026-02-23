@@ -95,7 +95,8 @@ def load_data():
     customers = customers.drop_duplicates(subset="customer_id")
     
     # ======= after kleaning=========#
-    st.header("🧹 Data Preview - After Cleaning")
+    with st.expander("📂 Data Preview - Before Cleaning"):
+    #st.header("🧹 Data Preview - After Cleaning")
     tab1c, tab2c, tab3c = st.tabs(["orders", "customers", "catalog"])
     with tab1c:
         st.subheader("Orders - Cleaned")
