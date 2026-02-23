@@ -94,9 +94,11 @@ def load_data():
     catalog = catalog.drop_duplicates(subset="training_id")
     customers = customers.drop_duplicates(subset="customer_id")
     
+    # ========= FIX REVENUE =========
+    orders["total_revenue"] = orders["qty"] * orders["price_per_pax"]
     # ======= after kleaning=========#
-    with st.expander("📂 Data Preview - Before Cleaning"):
-    #st.header("🧹 Data Preview - After Cleaning")
+    #with st.expander("📂 Data Preview - Before Cleaning"):
+    st.header("🧹 Data Preview - After Cleaning")
     tab1c, tab2c, tab3c = st.tabs(["orders", "customers", "catalog"])
     with tab1c:
         st.subheader("Orders - Cleaned")
@@ -117,9 +119,6 @@ def load_data():
         st.write("Missing Values:")
         st.write(catalog.isna().sum())
     
-    # ========= FIX REVENUE =========
-    orders["total_revenue"] = orders["qty"] * orders["price_per_pax"]
-
     # ========= MERGE =========
     df = orders.merge(
         catalog,
