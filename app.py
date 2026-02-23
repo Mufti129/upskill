@@ -146,10 +146,10 @@ def load_data():
 
 df = load_data()
 #Priveiw after Merge#
-with st.expander("🔗 Data Preview - After Merge"):
+with st.expander("Data Preview - After Merge"):
 
     st.subheader("Merged Dataset Preview")
-    st.dataframe(df.head())
+    st.dataframe(df.head(100))
 
     st.write("Shape:", df.shape)
 
