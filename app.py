@@ -49,7 +49,7 @@ def load_data():
         "1545802490"
     )
     
-    with st.expander("📂 Data Preview - Before Cleaning")
+    with st.expander("📂 Data Preview - Before Cleaning"):
         tab1, tab2, tab3 = st.tabs(["orders", "customers", "catalog"])
         with tab1:
             st.subheader("orders - Raw")
