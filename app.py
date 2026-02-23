@@ -171,7 +171,7 @@ st.sidebar.header("Filter")
 
 selected_year = st.sidebar.selectbox("Year", year_list)
 
-selected_city = st.sidebar.multiselect[
+selected_city = st.sidebar.multiselect(
     "City",
     df["city"].dropna().unique(),
     default=df["city"].dropna().unique()
