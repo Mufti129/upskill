@@ -100,8 +100,6 @@ def load_data():
     
     # ========= FIX REVENUE =========
     #orders["total_revenue"] = orders["qty"] * orders["price_per_pax"]
-    # ======= after kleaning=========#
-    #with st.expander("📂 Data Preview - Before Cleaning"):
     # ========= PREVIEW AFTER CLEANING =========
     with st.expander("Data Preview - After Cleaning"):
         tab1c, tab2c, tab3c = st.tabs(["Orders Clean", "Customers Clean", "Catalog Clean"])
@@ -178,16 +176,13 @@ selected_city = st.sidebar.multiselect(
     df["city"].dropna().unique(),
     default=df["city"].dropna().unique()
 )
-completed_only = st.sidebar.checkbox("Completed Only", value=True)
+#completed_only = st.sidebar.checkbox("Completed Only", value=True)
 
 filtered_df = df[
     (df["year"] == selected_year) &
     (df["city"].isin(selected_city))
 ]
-if completed_only:
-    filtered_df = filtered_df[
-        filtered_df["Status"].str.lower() == "completed"
-    ]
+
 if filtered_df.empty:
     st.warning("Tidak ada data untuk filter yang dipilih.")
     st.stop()
