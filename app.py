@@ -93,6 +93,7 @@ def load_data():
     orders = orders.drop_duplicates(subset="order_id")
     catalog = catalog.drop_duplicates(subset="training_id")
     customers = customers.drop_duplicates(subset="customer_id")
+    
     # ======= after kleaning=========#
     st.header("🧹 Data Preview - After Cleaning")
     tab1c, tab2c, tab3c = st.tabs(["Orders Clean", "Customers Clean", "Training Clean"])
