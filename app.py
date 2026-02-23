@@ -171,7 +171,11 @@ st.sidebar.header("Filter")
 
 selected_year = st.sidebar.selectbox("Year", year_list)
 
-selected_city = st.sidebar.multiselect["City",df["city"].dropna().unique(),default=df["city"].dropna().unique())
+selected_city = st.sidebar.multiselect[
+    "City",
+    df["city"].dropna().unique(),
+    default=df["city"].dropna().unique()
+)
 completed_only = st.sidebar.checkbox("Completed Only", value=True)
 
 filtered_df = df[(df["year"] == selected_year) & (df["city"].isin(selected_city)) ]
