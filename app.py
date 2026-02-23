@@ -298,6 +298,15 @@ st.caption(risk_note)
 top3_share = (client_rev.iloc[:3].sum() / client_rev.sum()) * 100
 st.metric("Top 3 Client Contribution %", f"{top3_share:.2f}%")
 
+top_clients = client_rev.head(5).reset_index()
+top_clients.columns = ["Company Name", "Total Revenue"]
+
+top_clients["Contribution %"] = (
+    top_clients["Total Revenue"] / client_rev.sum()
+) * 100
+
+st.subheader("Top 5 Clients by Revenue")
+st.dataframe(top_clients)
 # ======================================================
 # BUSINESS RISK SCORE
 # ======================================================
