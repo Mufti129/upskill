@@ -281,6 +281,108 @@ fig3 = px.bar(
 
 st.plotly_chart(fig3, use_container_width=True)
 
+# ======================================================
+# AUTO EXECUTIVE INSIGHT ENGINE
+# ======================================================
+
+st.markdown('<div class="section-title">📌 Automated Executive Insights</div>', unsafe_allow_html=True)
+
+insight_text = []
+
+# 1️⃣ Training dengan revenue terbesar
+top_training = (
+    filtered_df.groupby("training_name")["total_revenue"]
+    .sum()
+    .sort_values(ascending=False)
+)
+
+if not top_training.empty:
+    best_training_name = top_training.index[0]
+    best_training_value = top_training.iloc[0]
+    insight_text.append(
+        f"• Training dengan revenue terbesar sepanjang {selected_year} adalah **{best_training_name}** dengan total revenue Rp {best_training_value:,.0f}."
+    )
+
+# 2️⃣ Kategori paling diminati (berdasarkan peserta)
+if "category" in filtered_df.columns:
+    top_category = (
+        filtered_df.groupby("category")["qty"]
+        .sum()
+        .sort_values(ascending=False)
+    )
+
+    if not top_category.empty:
+        best_category = top_category.index[0]
+        best_category_value = top_category.iloc[0]
+        insight_text.append(
+            f"• Kategori training yang paling diminati adalah **{best_category}** dengan total {int(best_category_value)} peserta."
+        )
+
+# 3️⃣ Tren revenue per bulan
+if len(monthly) > 1:
+    if latest_growth > 10:
+        trend_comment = "menunjukkan akselerasi pertumbuhan yang kuat."
+    elif latest_growth > 0:
+        trend_comment = "menunjukkan pertumbuhan moderat."
+    else:
+        trend_comment = "mengalami penurunan dan perlu investigasi lebih lanjut."
+
+    insight_text.append(
+        f"• Tren revenue bulanan {trend_comment} Pertumbuhan bulan terakhir tercatat {latest_growth:.2f}%."
+    )
+
+# 4️⃣ Kota kontribusi terbesar
+city_contribution = (
+    filtered_df.groupby("city")["total_revenue"]
+    .sum()
+    .sort_values(ascending=False)
+)
+
+if not city_contribution.empty:
+    top_city = city_contribution.index[0]
+    top_city_value = city_contribution.iloc[0]
+    insight_text.append(
+        f"• Kota dengan kontribusi revenue tertinggi adalah **{top_city}** dengan total Rp {top_city_value:,.0f}."
+    )
+
+# 5️⃣ Upsell Potential
+client_analysis = (
+    filtered_df.groupby("company_name")
+    .agg(
+        total_revenue=("total_revenue","sum"),
+        total_orders=("order_id","nunique"),
+        total_participants=("qty","sum")
+    )
+    .reset_index()
+)
+
+if not client_analysis.empty:
+
+    median_revenue = client_analysis["total_revenue"].median()
+
+    upsell_candidates = client_analysis[
+        (client_analysis["total_revenue"] > median_revenue) &
+        (client_analysis["total_orders"] <= 2)
+    ]
+
+    if not upsell_candidates.empty:
+        top_upsell = upsell_candidates.sort_values(
+            by="total_revenue",
+            ascending=False
+        ).iloc[0]
+
+        insight_text.append(
+            f"• Klien **{top_upsell['company_name']}** berpotensi untuk di-upsell karena memiliki revenue Rp {top_upsell['total_revenue']:,.0f} namun frekuensi order masih rendah ({top_upsell['total_orders']} order)."
+        )
+    else:
+        insight_text.append(
+            "• Tidak ditemukan klien dengan kombinasi revenue tinggi namun frekuensi order rendah. Peluang upsell relatif terbatas."
+        )
+
+# OUTPUT INSIGHT
+for text in insight_text:
+    st.markdown(text)
+
 st.markdown("---")
 st.markdown(
     "<center><small>Executive Dashboard by Mukhammad Rekza Mufti• Auto Updated from Google Sheets • Powered by Streamlit</small></center>",
