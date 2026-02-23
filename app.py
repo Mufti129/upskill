@@ -106,16 +106,9 @@ def clean_strings(df):
     customers = customers.drop_duplicates(subset="company_name")
     orders["recalculated_revenue"] = orders["qty"] * orders["price_per_pax"]
     
-    # Identify mismatch
-    orders["revenue_mismatch"] = np.where(
-        orders["total_revenue"] != orders["recalculated_revenue"],
-        True,
-        False
-    )
-    
     # Replace incorrect revenue
     orders["total_revenue"] = orders["recalculated_revenue"]
-    orders.drop(columns=["recalculated_revenue"], inplace=True)
+
     # =========================
     # MERGE DATA
     # =========================
