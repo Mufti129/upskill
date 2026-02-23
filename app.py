@@ -497,7 +497,7 @@ elif business_health_index >= 50:
 else:
     st.error("CRITICAL - Struktur bisnis berisiko dan perlu tindakan strategis.")
 
-with st.expander("Penjelasan Lengkap Business Health Index", expanded=False):
+with st.expander("Penjelasan Business Health Index", expanded=False):
 
     st.markdown("""
     ## Apa itu Business Health Index?
@@ -518,6 +518,7 @@ with st.expander("Penjelasan Lengkap Business Health Index", expanded=False):
     - 0–5% → Stabil
     - -5–0% → Melemah
     - < -5% → Berisiko
+    
     ---
     ### Client Diversification (Bobot 35%)
     Mengukur ketergantungan pada klien terbesar.
@@ -527,12 +528,13 @@ with st.expander("Penjelasan Lengkap Business Health Index", expanded=False):
     - ≤ 20% → Sangat sehat
     - 20–40% → Perlu monitoring
     - > 40% → Risiko tinggi
+    
     ---
     ### Product Diversification (Bobot 25%)
     Mengukur apakah revenue terlalu tergantung pada sedikit produk/training.
-    Jika kurang dari 30% produk menghasilkan 80% revenue,
-    maka struktur produk dianggap terlalu terkonsentrasi.
+    Jika kurang dari 30% produk menghasilkan 80% revenue, maka struktur produk dianggap terlalu terkonsentrasi.
     Struktur sehat berarti revenue tersebar di lebih banyak produk.
+    
     ---
     ## Cara Membaca Skor Akhir
     - 80–100 → EXCELLENT (struktur kuat dan stabil)
@@ -540,13 +542,13 @@ with st.expander("Penjelasan Lengkap Business Health Index", expanded=False):
     - 50–64 → CAUTION (mulai ada kelemahan struktural)
     - < 50 → CRITICAL (perlu tindakan strategis)
     ---
-    ## Penting untuk Dipahami
-    Business Health Index bukan prediksi masa depan.
-    Ini adalah indikator struktur bisnis saat ini.
+    ## Kondisi indikator struktur bisnis saat ini.
+    
     Skor tinggi berarti:
     - Revenue tumbuh
     - Tidak tergantung pada 1 klien
     - Tidak tergantung pada sedikit produk
+    
     Skor rendah berarti:
     - Pertumbuhan melemah
     - Revenue terkonsentrasi
@@ -602,11 +604,7 @@ st.plotly_chart(fig3, use_container_width=True)
 # AUTO EXECUTIVE INSIGHT ENGINE
 # ======================================================
 
-# ======================================================
-# AUTO EXECUTIVE INSIGHT ENGINE
-# ======================================================
-
-st.markdown('<div class="section-title">📌 Automated Executive Insights</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Executive Insights</div>', unsafe_allow_html=True)
 
 # ======================================================
 # 1️⃣ TOP TRAINING 2024
@@ -622,7 +620,7 @@ if not top_training.empty:
     best_training_name = top_training.index[0]
     best_training_value = top_training.iloc[0]
 
-    st.markdown("### 1️⃣ Training dengan Revenue Terbesar")
+    st.markdown("### Training dengan Revenue Terbesar")
     st.write(
         f"Training dengan revenue terbesar sepanjang {selected_year} adalah "
         f"**{best_training_name}** dengan total revenue sebesar "
@@ -646,7 +644,7 @@ if "category" in filtered_df.columns:
         best_category = top_category.index[0]
         best_category_value = top_category.iloc[0]
 
-        st.markdown("### 2️⃣ Kategori Paling Diminati")
+        st.markdown("### Kategori Paling Diminati")
         st.write(
             f"Kategori training yang paling diminati adalah **{best_category}**, "
             f"dengan total peserta sebanyak {int(best_category_value)} orang. "
@@ -657,7 +655,7 @@ if "category" in filtered_df.columns:
 # 3️⃣ TREN REVENUE BULANAN
 # ======================================================
 
-st.markdown("### 3️⃣ Pola Tren Revenue Bulanan")
+st.markdown("### Pola Tren Revenue Bulanan")
 
 if len(monthly) > 1:
     if latest_growth > 10:
@@ -686,7 +684,7 @@ if not city_contribution.empty:
     top_city = city_contribution.index[0]
     top_city_value = city_contribution.iloc[0]
 
-    st.markdown("### 4️⃣ Kota dengan Kontribusi Revenue Tertinggi")
+    st.markdown("### Kota dengan Kontribusi Revenue Tertinggi")
     st.write(
         f"Kota dengan kontribusi revenue terbesar adalah **{top_city}**, "
         f"dengan total revenue sebesar Rp {top_city_value:,.0f}. "
@@ -697,7 +695,7 @@ if not city_contribution.empty:
 # 5️⃣ CLIENT UPSELL ANALYSIS
 # ======================================================
 
-st.markdown("### 5️⃣ Analisis Potensi Upsell Klien")
+st.markdown("### Analisis Potensi Upsell Klien")
 
 client_analysis = (
     filtered_df.groupby("company_name")
@@ -738,7 +736,7 @@ else:
 # CLIENT UPSELL POTENTIAL (IMPROVED LOGIC)
 # ======================================================
 
-st.markdown("### 6️⃣ Klien Berpotensi Upsell")
+st.markdown("### Klien Berpotensi Upsell")
 
 client_analysis = (
     filtered_df.groupby("company_name")
@@ -780,7 +778,7 @@ else:
 # TRAINING UPSELL POTENTIAL
 # ======================================================
 
-st.markdown("### 🎯 Training Berpotensi Upsell")
+st.markdown("### Training Berpotensi Upsell")
 
 training_analysis = (
     filtered_df.groupby("training_name")
