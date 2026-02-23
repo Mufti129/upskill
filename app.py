@@ -308,13 +308,13 @@ col2.metric("Top 3 Client Contribution %", f"{top3_share:.2f}%")
 # ======================
 
 if top1_share > 60:
-    risk_level = "🔴 EXTREME RISK - Single Client Dependency"
+    risk_level = "EXTREME RISK - Single Client Dependency"
 elif top1_share > 40:
-    risk_level = "🟠 HIGH RISK - Revenue Concentrated"
+    risk_level = "HIGH RISK - Revenue Concentrated"
 elif top1_share > 20:
-    risk_level = "🟡 MODERATE - Monitor Diversification"
+    risk_level = "MODERATE - Monitor Diversification"
 else:
-    risk_level = "🟢 HEALTHY - Diversified Revenue"
+    risk_level = "HEALTHY - Diversified Revenue"
 
 st.caption(f"Risk Assessment: {risk_level}")
 
@@ -374,6 +374,57 @@ elif top3_share > 60:
     st.info("Konsentrasi cukup tinggi. Fokus akuisisi klien baru.")
 else:
     st.success("Struktur revenue relatif stabil dan terdiversifikasi.")
+with st.expander("📘 Lihat Penjelasan & Rule of Thumb", expanded=False):
+
+    st.markdown("""
+    ### 1️⃣ Top 1 Client Contribution %
+
+    Menunjukkan berapa persen total revenue berasal dari 1 klien terbesar.
+
+    - < 20% → Revenue sehat dan tidak bergantung pada satu klien.
+    - 20–40% → Mulai ada ketergantungan.
+    - 40–60% → Berisiko tinggi.
+    - > 60% → Sangat berbahaya (single client dependency).
+
+    Semakin tinggi angka ini, semakin besar risiko bisnis terganggu jika klien tersebut berhenti.
+    """)
+
+    st.markdown("""
+    ### 2️⃣ Top 3 Client Contribution %
+
+    Mengukur konsentrasi revenue pada 3 klien terbesar.
+
+    - < 40% → Sangat sehat
+    - 40–60% → Masih aman
+    - 60–75% → Konsentrasi tinggi
+    - > 75% → Revenue terlalu terpusat
+
+    Jika 3 klien menyumbang sebagian besar revenue, risiko meningkat.
+    """)
+
+    st.markdown("""
+    ### 3️⃣ Client Tier
+
+    Klien dibagi berdasarkan kontribusi kumulatif:
+
+    - Tier A → ±70% revenue utama (fokus retensi)
+    - Tier B → Potensi upsell
+    - Tier C → Evaluasi efisiensi
+
+    Strategi:
+    - Tier A → Jaga hubungan
+    - Tier B → Naikkan value
+    - Tier C → Optimasi atau evaluasi
+    """)
+
+    st.markdown("""
+    ### 4️⃣ Upsell Potential
+
+    Klien Tier B adalah target terbaik untuk:
+    - Upgrade paket
+    - Program lanjutan
+    - Kontrak jangka panjang
+    """)
 
 # ======================================================
 # BUSINESS RISK SCORE
