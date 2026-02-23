@@ -98,27 +98,7 @@ def load_data():
     orders["total_revenue"] = orders["qty"] * orders["price_per_pax"]
     # ======= after kleaning=========#
     #with st.expander("📂 Data Preview - Before Cleaning"):
-    st.header("🧹 Data Preview - After Cleaning")
-    tab1c, tab2c, tab3c = st.tabs(["orders", "customers", "catalog"])
-    with tab1c:
-        st.subheader("Orders - Cleaned")
-        st.dataframe(orders_clean.head())
-        st.write("Shape:", orders_clean.shape)
-        st.write("Missing Values:")
-        st.write(orders_clean.isna().sum())
-    with tab2c:
-        st.subheader("Customers - Cleaned")
-        st.dataframe(customers_clean.head())
-        st.write("Shape:", customers_clean.shape)
-        st.write("Missing Values:")
-        st.write(customers_clean.isna().sum())
-    with tab3c:
-        st.subheader("catalog - Cleaned")
-        st.dataframe(catalog.head())
-        st.write("Shape:", catalog.shape)
-        st.write("Missing Values:")
-        st.write(catalog.isna().sum())
-    
+ 
     # ========= MERGE =========
     df = orders.merge(
         catalog,
