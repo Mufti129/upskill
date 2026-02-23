@@ -49,28 +49,28 @@ def load_data():
         "1545802490"
     )
     
-    st.header("📂 Data Preview - Before Cleaning")
-    tab1, tab2, tab3 = st.tabs(["orders", "customers", "catalog"])
-    with tab1:
-        st.subheader("orders - Raw")
-        st.dataframe(orders.head())
-        st.write("Shape:", orders.shape)
-        st.write("Missing Values:")
-        st.write(orders.isna().sum())
-    
-    with tab2:
-        st.subheader("customers - Raw")
-        st.dataframe(customers.head())
-        st.write("Shape:", customers.shape)
-        st.write("Missing Values:")
-        st.write(customers.isna().sum())
-    
-    with tab3:
-        st.subheader("catalog - Raw")
-        st.dataframe(catalog.head())
-        st.write("Shape:", catalog.shape)
-        st.write("Missing Values:")
-        st.write(catalog.isna().sum())
+    with st.expander("📂 Data Preview - Before Cleaning")
+        tab1, tab2, tab3 = st.tabs(["orders", "customers", "catalog"])
+        with tab1:
+            st.subheader("orders - Raw")
+            st.dataframe(orders.head())
+            st.write("Shape:", orders.shape)
+            st.write("Missing Values:")
+            st.write(orders.isna().sum())
+        
+        with tab2:
+            st.subheader("customers - Raw")
+            st.dataframe(customers.head())
+            st.write("Shape:", customers.shape)
+            st.write("Missing Values:")
+            st.write(customers.isna().sum())
+        
+        with tab3:
+            st.subheader("catalog - Raw")
+            st.dataframe(catalog.head())
+            st.write("Shape:", catalog.shape)
+            st.write("Missing Values:")
+            st.write(catalog.isna().sum())
     # ========= NUMERIC CLEANING =========
     for col in ["qty","price_per_pax","total_revenue"]:
         if col in orders.columns:
