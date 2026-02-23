@@ -171,18 +171,15 @@ st.sidebar.header("Filter")
 
 selected_year = st.sidebar.selectbox("Year", year_list)
 
-selected_city = st.sidebar.multiselect(
-    "City",
-    df["city"].dropna().unique(),
-    default=df["city"].dropna().unique()
-)
-#completed_only = st.sidebar.checkbox("Completed Only", value=True)
+selected_city = st.sidebar.multiselect["City",df["city"].dropna().unique(),default=df["city"].dropna().unique())
+completed_only = st.sidebar.checkbox("Completed Only", value=True)
 
-filtered_df = df[
-    (df["year"] == selected_year) &
-    (df["city"].isin(selected_city))
-]
+filtered_df = df[(df["year"] == selected_year) & (df["city"].isin(selected_city)) ]
 
+if completed_only:
+    filtered_df = filtered_df[
+        filtered_df["Status"].str.lower() == "completed"
+    ]
 if filtered_df.empty:
     st.warning("Tidak ada data untuk filter yang dipilih.")
     st.stop()
