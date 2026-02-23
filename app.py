@@ -273,15 +273,12 @@ client_rev = (
 
 top_client_share = (client_rev.iloc[0] / client_rev.sum()) * 100
 st.metric("Top Client Contribution %", f"{top_client_share:.2f}%")
-# ======================================================
-# CLIENT DEPENDENCY
-# ======================================================
+
 # ======================================================
 # CLIENT DEPENDENCY & RISK ANALYSIS
 # ======================================================
 
 st.markdown('<div class="section-title">Client Dependency & Risk Analysis</div>', unsafe_allow_html=True)
-
 # ======================
 # AGGREGATION
 # ======================
@@ -374,43 +371,33 @@ elif top3_share > 60:
     st.info("Konsentrasi cukup tinggi. Fokus akuisisi klien baru.")
 else:
     st.success("Struktur revenue relatif stabil dan terdiversifikasi.")
-with st.expander("📘 Lihat Penjelasan & Rule of Thumb", expanded=False):
+with st.expander("Penjelasan & Rule of Thumb", expanded=False):
 
     st.markdown("""
-    ### 1️⃣ Top 1 Client Contribution %
-
+    ### Top 1 Client Contribution %
     Menunjukkan berapa persen total revenue berasal dari 1 klien terbesar.
-
     - < 20% → Revenue sehat dan tidak bergantung pada satu klien.
     - 20–40% → Mulai ada ketergantungan.
     - 40–60% → Berisiko tinggi.
     - > 60% → Sangat berbahaya (single client dependency).
-
     Semakin tinggi angka ini, semakin besar risiko bisnis terganggu jika klien tersebut berhenti.
     """)
 
     st.markdown("""
-    ### 2️⃣ Top 3 Client Contribution %
-
+    ### Top 3 Client Contribution %
     Mengukur konsentrasi revenue pada 3 klien terbesar.
-
     - < 40% → Sangat sehat
     - 40–60% → Masih aman
     - 60–75% → Konsentrasi tinggi
     - > 75% → Revenue terlalu terpusat
-
     Jika 3 klien menyumbang sebagian besar revenue, risiko meningkat.
     """)
-
     st.markdown("""
-    ### 3️⃣ Client Tier
-
+    ### Client Tier
     Klien dibagi berdasarkan kontribusi kumulatif:
-
     - Tier A → ±70% revenue utama (fokus retensi)
     - Tier B → Potensi upsell
     - Tier C → Evaluasi efisiensi
-
     Strategi:
     - Tier A → Jaga hubungan
     - Tier B → Naikkan value
@@ -418,8 +405,7 @@ with st.expander("📘 Lihat Penjelasan & Rule of Thumb", expanded=False):
     """)
 
     st.markdown("""
-    ### 4️⃣ Upsell Potential
-
+    ### Upsell Potential
     Klien Tier B adalah target terbaik untuk:
     - Upgrade paket
     - Program lanjutan
@@ -429,24 +415,143 @@ with st.expander("📘 Lihat Penjelasan & Rule of Thumb", expanded=False):
 # ======================================================
 # BUSINESS RISK SCORE
 # ======================================================
+# ======================================================
+# BUSINESS HEALTH INDEX
+# ======================================================
 
-risk_score = 0
+st.markdown('<div class="section-title">Business Health Index</div>', unsafe_allow_html=True)
 
-if latest_growth < 0:
-    risk_score += 1
-if top_client_share > 40:
-    risk_score += 1
-if len(top_80) / len(training_rev) < 0.3:
-    risk_score += 1
+# ======================
+# 1️⃣ Growth Score
+# ======================
 
-st.markdown('<div class="section-title">Business Risk Level</div>', unsafe_allow_html=True)
-
-if risk_score == 0:
-    st.success("LOW RISK")
-elif risk_score == 1:
-    st.warning("MODERATE RISK")
+if latest_growth >= 10:
+    growth_score = 100
+elif latest_growth >= 5:
+    growth_score = 80
+elif latest_growth >= 0:
+    growth_score = 60
+elif latest_growth >= -5:
+    growth_score = 40
 else:
-    st.error("HIGH RISK")
+    growth_score = 20
+
+# ======================
+# 2️⃣ Client Diversification Score
+# ======================
+
+if top_client_share <= 20:
+    client_score = 100
+elif top_client_share <= 30:
+    client_score = 80
+elif top_client_share <= 40:
+    client_score = 60
+elif top_client_share <= 50:
+    client_score = 40
+else:
+    client_score = 20
+
+# ======================
+# 3️⃣ Product Diversification Score
+# ======================
+
+product_ratio = len(top_80) / len(training_rev)
+
+if product_ratio >= 0.5:
+    product_score = 100
+elif product_ratio >= 0.4:
+    product_score = 80
+elif product_ratio >= 0.3:
+    product_score = 60
+elif product_ratio >= 0.2:
+    product_score = 40
+else:
+    product_score = 20
+
+# ======================
+# FINAL INDEX (Weighted)
+# ======================
+
+business_health_index = (
+    growth_score * 0.40 +
+    client_score * 0.35 +
+    product_score * 0.25
+)
+
+# ======================
+# DISPLAY
+# ======================
+
+st.metric("Business Health Index", f"{business_health_index:.0f} / 100")
+
+# ======================
+# INTERPRETATION
+# ======================
+
+if business_health_index >= 80:
+    st.success("EXCELLENT - Struktur bisnis sangat sehat dan stabil.")
+elif business_health_index >= 65:
+    st.info("GOOD - Bisnis cukup sehat namun masih ada ruang perbaikan.")
+elif business_health_index >= 50:
+    st.warning("CAUTION - Perlu perhatian pada struktur revenue.")
+else:
+    st.error("CRITICAL - Struktur bisnis berisiko dan perlu tindakan strategis.")
+
+with st.expander("Penjelasan Lengkap Business Health Index", expanded=False):
+
+    st.markdown("""
+    ## Apa itu Business Health Index?
+
+    Business Health Index (BHI) adalah skor komposit (0–100) 
+    yang menggambarkan tingkat kesehatan struktur bisnis secara keseluruhan.
+
+    Skor ini dihitung dari 3 aspek utama:
+
+    ---
+    ### Growth (Bobot 40%)
+    Mengukur pertumbuhan revenue bulan terakhir (Month-over-Month).
+    Mengapa penting?
+    Karena pertumbuhan adalah indikator utama keberlanjutan bisnis.
+    Skor diberikan berdasarkan:
+    - ≥ 10% → Sangat sehat
+    - 5–10% → Baik
+    - 0–5% → Stabil
+    - -5–0% → Melemah
+    - < -5% → Berisiko
+    ---
+    ### Client Diversification (Bobot 35%)
+    Mengukur ketergantungan pada klien terbesar.
+    Jika satu klien menyumbang terlalu besar (>40% revenue),
+    maka bisnis rentan jika klien tersebut berhenti.
+    Prinsip umum:
+    - ≤ 20% → Sangat sehat
+    - 20–40% → Perlu monitoring
+    - > 40% → Risiko tinggi
+    ---
+    ### Product Diversification (Bobot 25%)
+    Mengukur apakah revenue terlalu tergantung pada sedikit produk/training.
+    Jika kurang dari 30% produk menghasilkan 80% revenue,
+    maka struktur produk dianggap terlalu terkonsentrasi.
+    Struktur sehat berarti revenue tersebar di lebih banyak produk.
+    ---
+    ## Cara Membaca Skor Akhir
+    - 80–100 → EXCELLENT (struktur kuat dan stabil)
+    - 65–79 → GOOD (cukup sehat, ada ruang perbaikan)
+    - 50–64 → CAUTION (mulai ada kelemahan struktural)
+    - < 50 → CRITICAL (perlu tindakan strategis)
+    ---
+    ## Penting untuk Dipahami
+    Business Health Index bukan prediksi masa depan.
+    Ini adalah indikator struktur bisnis saat ini.
+    Skor tinggi berarti:
+    - Revenue tumbuh
+    - Tidak tergantung pada 1 klien
+    - Tidak tergantung pada sedikit produk
+    Skor rendah berarti:
+    - Pertumbuhan melemah
+    - Revenue terkonsentrasi
+    - Struktur bisnis rentan terhadap guncangan
+    """)
 
 # ======================================================
 # VISUALIZATION
