@@ -86,19 +86,39 @@ def load_data():
         errors="coerce",
         dayfirst=True
     )
-
-    orders = orders.dropna(subset=["order_date"])
-
+     # ========= FIX REVENUE =========
+    orders["total_revenue"] = orders["qty"] * orders["price_per_pax"]
     # ========= REMOVE DUPLICATE =========
+    orders = orders.dropna(subset=["order_date"])
     orders = orders.drop_duplicates(subset="order_id")
     catalog = catalog.drop_duplicates(subset="training_id")
     customers = customers.drop_duplicates(subset="customer_id")
     
     # ========= FIX REVENUE =========
-    orders["total_revenue"] = orders["qty"] * orders["price_per_pax"]
+    #orders["total_revenue"] = orders["qty"] * orders["price_per_pax"]
     # ======= after kleaning=========#
     #with st.expander("📂 Data Preview - Before Cleaning"):
- 
+    # ========= PREVIEW AFTER CLEANING =========
+    with st.expander("🧹 Data Preview - After Cleaning"):
+        tab1c, tab2c, tab3c = st.tabs(["Orders Clean", "Customers Clean", "Catalog Clean"])
+        with tab1c:
+            st.subheader("Orders - Cleaned")
+            st.dataframe(orders.head())
+            st.write("Shape:", orders.shape)
+            st.write("Missing Values:")
+            st.write(orders.isna().sum())
+        with tab2c:
+            st.subheader("Customers - Cleaned")
+            st.dataframe(customers.head())
+            st.write("Shape:", customers.shape)
+            st.write("Missing Values:")
+            st.write(customers.isna().sum())
+        with tab3c:
+            st.subheader("Catalog - Cleaned")
+            st.dataframe(catalog.head())
+            st.write("Shape:", catalog.shape)
+            st.write("Missing Values:")
+            st.write(catalog.isna().sum())
     # ========= MERGE =========
     df = orders.merge(
         catalog,
