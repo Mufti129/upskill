@@ -139,10 +139,10 @@ df = load_data()
 
 st.sidebar.header("Filter")
 
-selected_year = st.sidebar.selectbox(
-    "Year",
-    sorted(df['year'].dropna().unique())
-)
+#selected_year = st.sidebar.selectbox(
+ #   "Year",
+  #  sorted(df['year'].dropna().unique())
+#)
 
 selected_city = st.sidebar.multiselect(
     "City",
