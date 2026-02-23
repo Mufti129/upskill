@@ -96,7 +96,7 @@ def load_data():
     # ========= STANDARDIZE TEXT =========
     orders["training_name"] = (orders["training_name"].str.strip().str.lower().str.title())
     catalog["training_name"] = (catalog["training_name"].str.strip().str.lower().str.title())
-    
+    orders["status"] = orders["status"].str.lower()
     # ========= FIX REVENUE =========
     #orders["total_revenue"] = orders["qty"] * orders["price_per_pax"]
     # ======= after kleaning=========#
