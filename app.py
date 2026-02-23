@@ -49,28 +49,28 @@ def load_data():
         "1545802490"
     )
     
-st.header("📂 Data Preview - Before Cleaning")
-tab1, tab2, tab3 = st.tabs(["Orders", "Customers", "Training"])
-with tab1:
-    st.subheader("Orders - Raw")
-    st.dataframe(orders.head())
-    st.write("Shape:", orders.shape)
-    st.write("Missing Values:")
-    st.write(orders.isna().sum())
-
-with tab2:
-    st.subheader("Customers - Raw")
-    st.dataframe(customers.head())
-    st.write("Shape:", customers.shape)
-    st.write("Missing Values:")
-    st.write(customers.isna().sum())
-
-with tab3:
-    st.subheader("Training - Raw")
-    st.dataframe(training.head())
-    st.write("Shape:", training.shape)
-    st.write("Missing Values:")
-    st.write(training.isna().sum())
+    st.header("📂 Data Preview - Before Cleaning")
+    tab1, tab2, tab3 = st.tabs(["Orders", "Customers", "Training"])
+    with tab1:
+        st.subheader("Orders - Raw")
+        st.dataframe(orders.head())
+        st.write("Shape:", orders.shape)
+        st.write("Missing Values:")
+        st.write(orders.isna().sum())
+    
+    with tab2:
+        st.subheader("Customers - Raw")
+        st.dataframe(customers.head())
+        st.write("Shape:", customers.shape)
+        st.write("Missing Values:")
+        st.write(customers.isna().sum())
+    
+    with tab3:
+        st.subheader("Training - Raw")
+        st.dataframe(training.head())
+        st.write("Shape:", training.shape)
+        st.write("Missing Values:")
+        st.write(training.isna().sum())
     # ========= NUMERIC CLEANING =========
     for col in ["qty","price_per_pax","total_revenue"]:
         if col in orders.columns:
@@ -94,26 +94,26 @@ with tab3:
     catalog = catalog.drop_duplicates(subset="training_id")
     customers = customers.drop_duplicates(subset="customer_id")
     # ======= after kleaning=========#
-st.header("🧹 Data Preview - After Cleaning")
-tab1c, tab2c, tab3c = st.tabs(["Orders Clean", "Customers Clean", "Training Clean"])
-with tab1c:
-    st.subheader("Orders - Cleaned")
-    st.dataframe(orders_clean.head())
-    st.write("Shape:", orders_clean.shape)
-    st.write("Missing Values:")
-    st.write(orders_clean.isna().sum())
-with tab2c:
-    st.subheader("Customers - Cleaned")
-    st.dataframe(customers_clean.head())
-    st.write("Shape:", customers_clean.shape)
-    st.write("Missing Values:")
-    st.write(customers_clean.isna().sum())
-with tab3c:
-    st.subheader("Training - Cleaned")
-    st.dataframe(training_clean.head())
-    st.write("Shape:", training_clean.shape)
-    st.write("Missing Values:")
-    st.write(training_clean.isna().sum())
+    st.header("🧹 Data Preview - After Cleaning")
+    tab1c, tab2c, tab3c = st.tabs(["Orders Clean", "Customers Clean", "Training Clean"])
+    with tab1c:
+        st.subheader("Orders - Cleaned")
+        st.dataframe(orders_clean.head())
+        st.write("Shape:", orders_clean.shape)
+        st.write("Missing Values:")
+        st.write(orders_clean.isna().sum())
+    with tab2c:
+        st.subheader("Customers - Cleaned")
+        st.dataframe(customers_clean.head())
+        st.write("Shape:", customers_clean.shape)
+        st.write("Missing Values:")
+        st.write(customers_clean.isna().sum())
+    with tab3c:
+        st.subheader("Training - Cleaned")
+        st.dataframe(training_clean.head())
+        st.write("Shape:", training_clean.shape)
+        st.write("Missing Values:")
+        st.write(training_clean.isna().sum())
     
     # ========= FIX REVENUE =========
     orders["total_revenue"] = orders["qty"] * orders["price_per_pax"]
