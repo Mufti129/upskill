@@ -96,6 +96,7 @@ def load_data():
     # ========= STANDARDIZE TEXT =========
     orders["training_name"] = (orders["training_name"].str.strip().str.lower().str.title())
     catalog["training_name"] = (catalog["training_name"].str.strip().str.lower().str.title())
+    orders["status"] = orders["status"].str.lower()
     
     # ========= FIX REVENUE =========
     #orders["total_revenue"] = orders["qty"] * orders["price_per_pax"]
@@ -144,7 +145,19 @@ def load_data():
 
 
 df = load_data()
+#Priveiw after Merge#
+with st.expander("🔗 Data Preview - After Merge"):
 
+    st.subheader("Merged Dataset Preview")
+    st.dataframe(df.head())
+
+    st.write("Shape:", df.shape)
+
+    st.write("Missing Values:")
+    st.write(df.isna().sum())
+
+    st.write("Columns:")
+    st.write(list(df.columns))
 # ======================================================
 # DEFENSIVE CHECK
 # ======================================================
