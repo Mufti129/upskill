@@ -415,7 +415,55 @@ else:
 # 6️⃣ PRODUCT / TRAINING UPSELL POTENTIAL
 # ======================================================
 
-st.markdown("### 6️⃣ Training dengan Potensi Upsell")
+#st.markdown("### 6️⃣ Training dengan Potensi Upsell")
+
+# ======================================================
+# CLIENT UPSELL POTENTIAL (IMPROVED LOGIC)
+# ======================================================
+
+st.markdown("### 6️⃣ Klien Berpotensi Upsell")
+
+client_analysis = (
+    filtered_df.groupby("company_name")
+    .agg(
+        total_revenue=("total_revenue","sum"),
+        total_orders=("order_id","nunique"),
+        total_participants=("qty","sum"),
+        training_variety=("training_name","nunique")
+    )
+    .reset_index()
+)
+
+# Threshold logic
+revenue_threshold = client_analysis["total_revenue"].quantile(0.6)
+order_threshold = client_analysis["total_orders"].median()
+
+upsell_clients = client_analysis[
+    (client_analysis["total_revenue"] >= revenue_threshold) &
+    (
+        (client_analysis["total_orders"] <= order_threshold) |
+        (client_analysis["training_variety"] <= 2)
+    )
+].sort_values(by="total_revenue", ascending=False)
+
+if not upsell_clients.empty:
+
+    st.write(
+        "Klien berikut memiliki revenue kuat namun penetrasi produk masih terbatas. "
+        "Strategi upsell dapat difokuskan pada penawaran paket lanjutan, kontrak tahunan, "
+        "atau ekspansi ke kategori training lain."
+    )
+
+    st.dataframe(upsell_clients.head(5), use_container_width=True)
+
+else:
+    st.write("Tidak ditemukan klien dengan karakteristik upsell yang signifikan.")
+
+# ======================================================
+# TRAINING UPSELL POTENTIAL
+# ======================================================
+
+st.markdown("### 🎯 Training Berpotensi Upsell")
 
 training_analysis = (
     filtered_df.groupby("training_name")
@@ -427,25 +475,26 @@ training_analysis = (
     .reset_index()
 )
 
-median_training_rev = training_analysis["total_revenue"].median()
+rev_threshold = training_analysis["total_revenue"].quantile(0.6)
+participant_threshold = training_analysis["total_participants"].median()
 
 upsell_training = training_analysis[
-    (training_analysis["total_revenue"] > median_training_rev) &
-    (training_analysis["total_orders"] <= 3)
+    (training_analysis["total_revenue"] >= rev_threshold) &
+    (training_analysis["total_orders"] <= training_analysis["total_orders"].median()) &
+    (training_analysis["total_participants"] >= participant_threshold)
 ].sort_values(by="total_revenue", ascending=False)
 
 if not upsell_training.empty:
 
     st.write(
-        "Training berikut memiliki revenue relatif tinggi "
-        "namun jumlah transaksi masih terbatas. "
-        "Potensi peningkatan dapat dilakukan melalui bundling, kontrak tahunan, atau cross-sell:"
+        "Training berikut memiliki demand dan revenue kuat namun frekuensi transaksi relatif rendah. "
+        "Potensi upsell dapat dilakukan melalui paket corporate, bundling lanjutan, atau retargeting klien existing."
     )
 
     st.dataframe(upsell_training.head(5), use_container_width=True)
 
 else:
-    st.write("Tidak ditemukan training dengan potensi upsell signifikan.")
+    st.write("Tidak ditemukan training dengan peluang upsell signifikan.")
 
 st.markdown("---")
 st.markdown(
