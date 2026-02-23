@@ -276,37 +276,105 @@ st.metric("Top Client Contribution %", f"{top_client_share:.2f}%")
 # ======================================================
 # CLIENT DEPENDENCY
 # ======================================================
+# ======================================================
+# CLIENT DEPENDENCY & RISK ANALYSIS
+# ======================================================
 
+st.markdown('<div class="section-title">Client Dependency & Risk Analysis</div>', unsafe_allow_html=True)
+
+# ======================
+# AGGREGATION
+# ======================
 client_rev = (
     filtered_df.groupby("company_name")["total_revenue"]
     .sum()
     .sort_values(ascending=False)
 )
 
-# 🔹 Top 1 Contribution
-top_client_share = (client_rev.iloc[0] / client_rev.sum()) * 100
-#st.metric("Top Client Contribution %", f"{top_client_share:.2f}%")
-# 🔹 Interpretasi Risiko
-if top_client_share > 60:
-    risk_note = "High dependency risk. Revenue sangat bergantung pada 1 klien."
-elif top_client_share > 40:
-    risk_note = "Moderate dependency. Perlu diversifikasi klien."
-else:
-    risk_note = "Client distribution relatif sehat."
-st.caption(risk_note)
-# 🔹 Top 3 Concentration
-top3_share = (client_rev.iloc[:3].sum() / client_rev.sum()) * 100
-st.metric("Top 3 Client Contribution %", f"{top3_share:.2f}%")
+total_revenue_all = client_rev.sum()
 
+# ======================
+# TOP 1 & TOP 3 SHARE
+# ======================
+top1_share = (client_rev.iloc[0] / total_revenue_all) * 100
+top3_share = (client_rev.iloc[:3].sum() / total_revenue_all) * 100
+
+col1, col2 = st.columns(2)
+col1.metric("Top 1 Client Contribution %", f"{top1_share:.2f}%")
+col2.metric("Top 3 Client Contribution %", f"{top3_share:.2f}%")
+
+# ======================
+# RISK CLASSIFICATION (RULE OF THUMB)
+# ======================
+
+if top1_share > 60:
+    risk_level = "🔴 EXTREME RISK - Single Client Dependency"
+elif top1_share > 40:
+    risk_level = "🟠 HIGH RISK - Revenue Concentrated"
+elif top1_share > 20:
+    risk_level = "🟡 MODERATE - Monitor Diversification"
+else:
+    risk_level = "🟢 HEALTHY - Diversified Revenue"
+
+st.caption(f"Risk Assessment: {risk_level}")
+
+# ======================
+# TOP 5 CLIENT TABLE
+# ======================
 top_clients = client_rev.head(5).reset_index()
 top_clients.columns = ["Company Name", "Total Revenue"]
-
 top_clients["Contribution %"] = (
-    top_clients["Total Revenue"] / client_rev.sum()
+    top_clients["Total Revenue"] / total_revenue_all
 ) * 100
 
 st.subheader("Top 5 Clients by Revenue")
 st.dataframe(top_clients)
+
+# ======================
+# CLIENT TIER SEGMENTATION
+# ======================
+client_df = client_rev.reset_index()
+client_df.columns = ["Company Name", "Total Revenue"]
+
+client_df["Contribution %"] = (
+    client_df["Total Revenue"] / total_revenue_all
+) * 100
+
+client_df["Cumulative %"] = client_df["Contribution %"].cumsum()
+
+def assign_tier(cum_pct):
+    if cum_pct <= 70:
+        return "Tier A"
+    elif cum_pct <= 90:
+        return "Tier B"
+    else:
+        return "Tier C"
+
+client_df["Tier"] = client_df["Cumulative %"].apply(assign_tier)
+
+st.subheader("Client Tier Distribution")
+st.dataframe(client_df.head(10))
+
+# ======================
+# UPSell SIGNAL (Mid Tier Candidates)
+# ======================
+upsell_candidates = client_df[
+    client_df["Tier"] == "Tier B"
+].head(5)
+
+st.subheader("Upsell Potential Clients (Tier B)")
+st.dataframe(upsell_candidates)
+
+# ======================
+# STRATEGIC NOTE
+# ======================
+if top3_share > 75:
+    st.warning("Revenue terlalu terpusat pada 3 klien teratas. Perlu strategi diversifikasi.")
+elif top3_share > 60:
+    st.info("Konsentrasi cukup tinggi. Fokus akuisisi klien baru.")
+else:
+    st.success("Struktur revenue relatif stabil dan terdiversifikasi.")
+
 # ======================================================
 # BUSINESS RISK SCORE
 # ======================================================
