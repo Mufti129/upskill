@@ -121,6 +121,7 @@ def load_data():
             st.write("Shape:", catalog.shape)
             st.write("Missing Values:")
             st.write(catalog.isna().sum())
+   
     # ========= MERGE =========
     df = orders.merge(
         catalog,
@@ -145,15 +146,11 @@ def load_data():
 df = load_data()
 #Priveiw after Merge#
 with st.expander("Data Preview - After Merge"):
-
     st.subheader("Merged Dataset Preview")
     st.dataframe(df.head(100))
-
     st.write("Shape:", df.shape)
-
     st.write("Missing Values:")
     st.write(df.isna().sum())
-
     st.write("Columns:")
     st.write(list(df.columns))
 # ======================================================
@@ -226,7 +223,10 @@ st.markdown("---")
 # ======================================================
 # STRATEGIC INSIGHT
 # ======================================================
+min_date = filtered_df["order_date"].min()
+max_date = filtered_df["order_date"].max()
 
+st.caption(f"Periode Analisis: {min_date.date()} sampai {max_date.date()}")
 st.markdown('<div class="section-title">Strategic Insights</div>', unsafe_allow_html=True)
 
 monthly = (
