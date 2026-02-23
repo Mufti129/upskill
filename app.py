@@ -273,6 +273,30 @@ client_rev = (
 
 top_client_share = (client_rev.iloc[0] / client_rev.sum()) * 100
 st.metric("Top Client Contribution %", f"{top_client_share:.2f}%")
+# ======================================================
+# CLIENT DEPENDENCY
+# ======================================================
+
+client_rev = (
+    filtered_df.groupby("company_name")["total_revenue"]
+    .sum()
+    .sort_values(ascending=False)
+)
+
+# 🔹 Top 1 Contribution
+top_client_share = (client_rev.iloc[0] / client_rev.sum()) * 100
+#st.metric("Top Client Contribution %", f"{top_client_share:.2f}%")
+# 🔹 Interpretasi Risiko
+if top_client_share > 60:
+    risk_note = "High dependency risk. Revenue sangat bergantung pada 1 klien."
+elif top_client_share > 40:
+    risk_note = "Moderate dependency. Perlu diversifikasi klien."
+else:
+    risk_note = "Client distribution relatif sehat."
+st.caption(risk_note)
+# 🔹 Top 3 Concentration
+top3_share = (client_rev.iloc[:3].sum() / client_rev.sum()) * 100
+st.metric("Top 3 Client Contribution %", f"{top3_share:.2f}%")
 
 # ======================================================
 # BUSINESS RISK SCORE
