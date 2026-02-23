@@ -61,53 +61,31 @@ def load_data():
     # =========================
     # BASIC CLEANING
     # =========================
-def clean_columns(df):
-    df.columns = (
-        df.columns
-        .str.strip()
-        .str.lower()
-        .str.replace(" ", "_")
-    )
-    return df
-    orders = clean_columns(orders)
-    catalog = clean_columns(catalog)
-    customers = clean_columns(customers)
-def clean_strings(df):
-    for col in df.select_dtypes(include="object").columns:
-        df[col] = df[col].astype(str).str.strip()
-    return df
-    orders = clean_strings(orders)
-    catalog = clean_strings(catalog)
-    customers = clean_strings(customers)
-    #orders['order_date'] = pd.to_datetime(orders['order_date'], errors='coerce')
-    #orders['qty'] = pd.to_numeric(orders['qty'], errors='coerce')
-    #orders['total_revenue'] = pd.to_numeric(orders['total_revenue'], errors='coerce')
-
     # Convert numeric columns
-    orders["qty"] = pd.to_numeric(orders["qty"], errors="coerce")
-    orders["price_per_pax"] = pd.to_numeric(orders["price_per_pax"], errors="coerce")
-    orders["total_revenue"] = pd.to_numeric(orders["total_revenue"], errors="coerce")
+    #orders["qty"] = pd.to_numeric(orders["qty"], errors="coerce")
+    #orders["price_per_pax"] = pd.to_numeric(orders["price_per_pax"], errors="coerce")
+    #orders["total_revenue"] = pd.to_numeric(orders["total_revenue"], errors="coerce")
     
-    catalog["price_per_pax"] = pd.to_numeric(catalog["price_per_pax"], errors="coerce")
-    catalog["max_pax"] = pd.to_numeric(catalog["max_pax"], errors="coerce")
-    catalog["duration_days"] = pd.to_numeric(catalog["duration_days"], errors="coerce")
+    #catalog["price_per_pax"] = pd.to_numeric(catalog["price_per_pax"], errors="coerce")
+    #catalog["max_pax"] = pd.to_numeric(catalog["max_pax"], errors="coerce")
+    #catalog["duration_days"] = pd.to_numeric(catalog["duration_days"], errors="coerce")
     
     # Convert date columns samakan format tampilan (YYYY-MM-DD)
     # Convert ke datetime
-    customers["contract_start"] = pd.to_datetime(customers["contract_start"],errors="coerce",dayfirst=True)
-    customers["contract_start"] = customers["contract_start"].dt.date
-    orders["order_date"] = pd.to_datetime(orders["order_date"],errors="coerce",dayfirst=True)
-    orders["order_date"] = orders["order_date"].dt.date
+    #customers["contract_start"] = pd.to_datetime(customers["contract_start"],errors="coerce",dayfirst=True)
+    #customers["contract_start"] = customers["contract_start"].dt.date
+    #orders["order_date"] = pd.to_datetime(orders["order_date"],errors="coerce",dayfirst=True)
+    #orders["order_date"] = orders["order_date"].dt.date
     
     #orders = orders.dropna(subset=['order_date'])
     #takeout duplikat
     orders = orders.drop_duplicates(subset="order_id")
     catalog = catalog.drop_duplicates(subset="training_id")
     customers = customers.drop_duplicates(subset="company_name")
-    orders["recalculated_revenue"] = orders["qty"] * orders["price_per_pax"]
+    #orders["recalculated_revenue"] = orders["qty"] * orders["price_per_pax"]
     
     # Replace incorrect revenue
-    orders["total_revenue"] = orders["recalculated_revenue"]
+   # orders["total_revenue"] = orders["recalculated_revenue"]
 
     # =========================
     # MERGE DATA
@@ -139,10 +117,10 @@ df = load_data()
 
 st.sidebar.header("Filter")
 
-#selected_year = st.sidebar.selectbox(
- #   "Year",
-  #  sorted(df['year'].dropna().unique())
-#)
+selected_year = st.sidebar.selectbox(
+    "Year",
+    sorted(df['year'].dropna().unique())
+)
 
 selected_city = st.sidebar.multiselect(
     "City",
