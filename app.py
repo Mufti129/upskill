@@ -285,11 +285,16 @@ st.plotly_chart(fig3, use_container_width=True)
 # AUTO EXECUTIVE INSIGHT ENGINE
 # ======================================================
 
+# ======================================================
+# AUTO EXECUTIVE INSIGHT ENGINE
+# ======================================================
+
 st.markdown('<div class="section-title">📌 Automated Executive Insights</div>', unsafe_allow_html=True)
 
-insight_text = []
+# ======================================================
+# 1️⃣ TOP TRAINING 2024
+# ======================================================
 
-# 1️⃣ Training dengan revenue terbesar
 top_training = (
     filtered_df.groupby("training_name")["total_revenue"]
     .sum()
@@ -299,12 +304,21 @@ top_training = (
 if not top_training.empty:
     best_training_name = top_training.index[0]
     best_training_value = top_training.iloc[0]
-    insight_text.append(
-        f"• Training dengan revenue terbesar sepanjang {selected_year} adalah **{best_training_name}** dengan total revenue Rp {best_training_value:,.0f}."
+
+    st.markdown("### 1️⃣ Training dengan Revenue Terbesar")
+    st.write(
+        f"Training dengan revenue terbesar sepanjang {selected_year} adalah "
+        f"**{best_training_name}** dengan total revenue sebesar "
+        f"Rp {best_training_value:,.0f}. "
+        "Training ini menjadi kontributor utama dalam struktur pendapatan tahunan."
     )
 
-# 2️⃣ Kategori paling diminati (berdasarkan peserta)
+# ======================================================
+# 2️⃣ KATEGORI PALING DIMINATI
+# ======================================================
+
 if "category" in filtered_df.columns:
+
     top_category = (
         filtered_df.groupby("category")["qty"]
         .sum()
@@ -314,24 +328,37 @@ if "category" in filtered_df.columns:
     if not top_category.empty:
         best_category = top_category.index[0]
         best_category_value = top_category.iloc[0]
-        insight_text.append(
-            f"• Kategori training yang paling diminati adalah **{best_category}** dengan total {int(best_category_value)} peserta."
+
+        st.markdown("### 2️⃣ Kategori Paling Diminati")
+        st.write(
+            f"Kategori training yang paling diminati adalah **{best_category}**, "
+            f"dengan total peserta sebanyak {int(best_category_value)} orang. "
+            "Hal ini menunjukkan demand pasar yang kuat pada kategori tersebut."
         )
 
-# 3️⃣ Tren revenue per bulan
+# ======================================================
+# 3️⃣ TREN REVENUE BULANAN
+# ======================================================
+
+st.markdown("### 3️⃣ Pola Tren Revenue Bulanan")
+
 if len(monthly) > 1:
     if latest_growth > 10:
-        trend_comment = "menunjukkan akselerasi pertumbuhan yang kuat."
+        trend_comment = "mengalami akselerasi pertumbuhan yang kuat."
     elif latest_growth > 0:
-        trend_comment = "menunjukkan pertumbuhan moderat."
+        trend_comment = "mengalami pertumbuhan moderat."
     else:
-        trend_comment = "mengalami penurunan dan perlu investigasi lebih lanjut."
+        trend_comment = "mengalami penurunan dan perlu evaluasi strategi penjualan."
 
-    insight_text.append(
-        f"• Tren revenue bulanan {trend_comment} Pertumbuhan bulan terakhir tercatat {latest_growth:.2f}%."
+    st.write(
+        f"Secara tren, revenue bulanan {trend_comment} "
+        f"Pertumbuhan bulan terakhir tercatat sebesar {latest_growth:.2f}% dibanding bulan sebelumnya."
     )
 
-# 4️⃣ Kota kontribusi terbesar
+# ======================================================
+# 4️⃣ KOTA KONTRIBUTOR TERBESAR
+# ======================================================
+
 city_contribution = (
     filtered_df.groupby("city")["total_revenue"]
     .sum()
@@ -341,11 +368,20 @@ city_contribution = (
 if not city_contribution.empty:
     top_city = city_contribution.index[0]
     top_city_value = city_contribution.iloc[0]
-    insight_text.append(
-        f"• Kota dengan kontribusi revenue tertinggi adalah **{top_city}** dengan total Rp {top_city_value:,.0f}."
+
+    st.markdown("### 4️⃣ Kota dengan Kontribusi Revenue Tertinggi")
+    st.write(
+        f"Kota dengan kontribusi revenue terbesar adalah **{top_city}**, "
+        f"dengan total revenue sebesar Rp {top_city_value:,.0f}. "
+        "Wilayah ini berperan signifikan terhadap performa bisnis keseluruhan."
     )
 
-# 5️⃣ Upsell Potential
+# ======================================================
+# 5️⃣ CLIENT UPSELL ANALYSIS
+# ======================================================
+
+st.markdown("### 5️⃣ Analisis Potensi Upsell Klien")
+
 client_analysis = (
     filtered_df.groupby("company_name")
     .agg(
@@ -356,32 +392,60 @@ client_analysis = (
     .reset_index()
 )
 
-if not client_analysis.empty:
+median_revenue = client_analysis["total_revenue"].median()
 
-    median_revenue = client_analysis["total_revenue"].median()
+upsell_clients = client_analysis[
+    (client_analysis["total_revenue"] > median_revenue) &
+    (client_analysis["total_orders"] <= 2)
+].sort_values(by="total_revenue", ascending=False)
 
-    upsell_candidates = client_analysis[
-        (client_analysis["total_revenue"] > median_revenue) &
-        (client_analysis["total_orders"] <= 2)
-    ]
+if not upsell_clients.empty:
 
-    if not upsell_candidates.empty:
-        top_upsell = upsell_candidates.sort_values(
-            by="total_revenue",
-            ascending=False
-        ).iloc[0]
+    st.write(
+        "Berikut adalah klien dengan potensi upsell tinggi, "
+        "ditinjau dari revenue besar namun frekuensi transaksi masih rendah:"
+    )
 
-        insight_text.append(
-            f"• Klien **{top_upsell['company_name']}** berpotensi untuk di-upsell karena memiliki revenue Rp {top_upsell['total_revenue']:,.0f} namun frekuensi order masih rendah ({top_upsell['total_orders']} order)."
-        )
-    else:
-        insight_text.append(
-            "• Tidak ditemukan klien dengan kombinasi revenue tinggi namun frekuensi order rendah. Peluang upsell relatif terbatas."
-        )
+    st.dataframe(upsell_clients.head(5), use_container_width=True)
 
-# OUTPUT INSIGHT
-for text in insight_text:
-    st.markdown(text)
+else:
+    st.write("Tidak ditemukan klien dengan pola revenue tinggi namun frekuensi rendah.")
+
+# ======================================================
+# 6️⃣ PRODUCT / TRAINING UPSELL POTENTIAL
+# ======================================================
+
+st.markdown("### 6️⃣ Training dengan Potensi Upsell")
+
+training_analysis = (
+    filtered_df.groupby("training_name")
+    .agg(
+        total_revenue=("total_revenue","sum"),
+        total_orders=("order_id","nunique"),
+        total_participants=("qty","sum")
+    )
+    .reset_index()
+)
+
+median_training_rev = training_analysis["total_revenue"].median()
+
+upsell_training = training_analysis[
+    (training_analysis["total_revenue"] > median_training_rev) &
+    (training_analysis["total_orders"] <= 3)
+].sort_values(by="total_revenue", ascending=False)
+
+if not upsell_training.empty:
+
+    st.write(
+        "Training berikut memiliki revenue relatif tinggi "
+        "namun jumlah transaksi masih terbatas. "
+        "Potensi peningkatan dapat dilakukan melalui bundling, kontrak tahunan, atau cross-sell:"
+    )
+
+    st.dataframe(upsell_training.head(5), use_container_width=True)
+
+else:
+    st.write("Tidak ditemukan training dengan potensi upsell signifikan.")
 
 st.markdown("---")
 st.markdown(
