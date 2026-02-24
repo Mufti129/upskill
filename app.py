@@ -500,13 +500,12 @@ else:
 with st.expander("Penjelasan Business Health Index", expanded=False):
 
     st.markdown("""
-    ## Apa itu Business Health Index?
+    ## Business Health Index?
 
     Business Health Index (BHI) adalah skor komposit (0–100) 
     yang menggambarkan tingkat kesehatan struktur bisnis secara keseluruhan.
 
     Skor ini dihitung dari 3 aspek utama:
-
     ---
     ### Growth (Bobot 40%)
     Mengukur pertumbuhan revenue bulan terakhir (Month-over-Month).
